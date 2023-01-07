@@ -1,6 +1,5 @@
 @using BTCPayServer.Abstractions.Contracts
 @using BTCPayServer.Abstractions.Extensions
-@using Microsoft.AspNetCore.Mvc.TagHelpers
 @inject IScopeProvider ScopeProvider
 @{
     var storeId = ScopeProvider.GetCurrentStoreId();
@@ -9,7 +8,7 @@
 {
     <li class="nav-item">
         <a asp-area="" asp-controller="Trocador" asp-action="UpdateTrocadorSettings" asp-route-storeId="@storeId" class="nav-link @ViewData.IsActivePage("Trocador")" id="Nav-Trocador">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 160" alt="Trocador" class="icon"><g transform="translate(-20,-20)"><path fill="currentColor" d="m111.6 96.1-9.6-9.6-9.5-9.5a4.7 4.7 0 0 0-3.3-1.4c-1.2 0-2.4.5-3.3 1.4L73.6 89.3l-12.3 12.3-3.9-3.9-3.9-3.9c-.7-.7-1.6-.8-2.3-.5-.7.3-1.3 1-1.3 1.9V138a2.04 2.04 0 0 0 2.1 2.1h42.6c.9 0 1.6-.6 1.9-1.3.3-.7.2-1.6-.5-2.3l-4.6-4.6-4.6-4.6L99.3 115l12.3-12.3c.9-.9 1.4-2.1 1.4-3.3 0-1.2-.5-2.4-1.4-3.3z"/><path fill="currentColor" d="M107.1 133.4c-1.2 0-2.3-.4-3.2-1.3a4.47 4.47 0 0 1 0-6.4l27.6-27.6c1.8-1.8 4.6-1.8 6.4 0l3 3V68.9h-32.3l3.1 3.1c1.8 1.8 1.8 4.6 0 6.4a4.47 4.47 0 0 1-6.4 0L94.6 67.6a4.47 4.47 0 0 1-1-4.9c.7-1.7 2.3-2.8 4.2-2.8h47.7c2.5 0 4.5 2 4.5 4.5v47.7c0 1.8-1.1 3.5-2.8 4.2-1.7.7-3.6.3-4.9-1l-7.6-7.6-24.4 24.4c-.8.9-2 1.3-3.2 1.3z"/></g></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 30 512 512" alt="Trocador" class="icon"><g style="transform: scale(0.65) translate(35%, 35%);"><path fill="currentColor" d="M504.971 359.029c9.373 9.373 9.373 24.569 0 33.941l-80 79.984c-15.01 15.01-40.971 4.49-40.971-16.971V416h-58.785a12.004 12.004 0 0 1-8.773-3.812l-70.556-75.596 53.333-57.143L352 336h32v-39.981c0-21.438 25.943-31.998 40.971-16.971l80 79.981zM12 176h84l52.781 56.551 53.333-57.143-70.556-75.596A11.999 11.999 0 0 0 122.785 96H12c-6.627 0-12 5.373-12 12v56c0 6.627 5.373 12 12 12zm372 0v39.984c0 21.46 25.961 31.98 40.971 16.971l80-79.984c9.373-9.373 9.373-24.569 0-33.941l-80-79.981C409.943 24.021 384 34.582 384 56.019V96h-58.785a12.004 12.004 0 0 0-8.773 3.812L96 336H12c-6.627 0-12 5.373-12 12v56c0 6.627 5.373 12 12 12h110.785c3.326 0 6.503-1.381 8.773-3.812L352 176h32z"></path></g></svg>
             <span>Trocador</span>
         </a>
     </li>

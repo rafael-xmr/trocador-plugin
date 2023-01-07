@@ -11,8 +11,11 @@
             <trocador inline-template
                         :to-currency="srvModel.paymentMethodId"
                         :to-currency-due="srvModel.btcDue * (1 + (@settings.AmountMarkupPercentage / 100)) "
-                        :to-currency-address="srvModel.btcAddress">
-                <iframe :src="url" style="min-height:600px;width:100%;border:none" allowtransparency="true"></iframe>
+                        :to-currency-address="srvModel.btcAddress"
+                        :customer-email="srvModel.customerEmail"
+                        :brand-color="srvModel.brandColor"
+                        :srv-model="srvModel">
+                <iframe :src="url" style="min-height:300px;width:100%;border:none" id="trocador-iframe" allowtransparency="true"></iframe>
             </trocador>
         </div>
     }

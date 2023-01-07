@@ -1,14 +1,57 @@
 Vue.component("trocador", {
-    props: ["toCurrency", "toCurrencyDue", "toCurrencyAddress"],
-    data() {
-        return {
-            shown: false,
-        };
+  props: [
+    "toCurrency",
+    "toCurrencyDue",
+    "toCurrencyAddress",
+    "customerEmail",
+    "brandColor",
+    "srvModel",
+  ],
+  data() {
+    return {
+      shown: false,
+    };
+  },
+  computed: {
+    url() {
+      console.log(this.srvModel);
+      // -- Required Params --
+      let tickerTo = this.toCurrency;
+      let networkTo = "Mainnet";
+
+      if (tickerTo.endsWith("LightningLike") || tickerTo.endsWith("LNURLPay")) {
+        tickerTo = "btc";
+        networkTo = "Lightning";
+      } else {
+        tickerTo = tickerTo.toLowerCase();
+      }
+
+      const tempAddress = "18QgDvPFKV5H7JTpwKFk6H3Eo9JcBK52VH";
+
+      // -- Optional Params --
+      const amount = this.toCurrencyDue ? `&amount=${this.toCurrencyDue}` : "";
+      const fromPreset = "&ticker_from=xmr" + "&network_from=Mainnet";
+      const email = this.customerEmail ? `&email=${this.customerEmail}` : "";
+
+      const btcPayGreen = "51b13e";
+      const buttonBgColor = `&buttonbgcolor=${this.brandColor || btcPayGreen}`;
+
+      const colorPreset = "&buttonbgcolor=blue";
+
+      return (
+        "https://trocador.app/anonpay/?" +
+        `ticker_to=${tickerTo}` +
+        `&network_to=${networkTo}` +
+        `&address=${tempAddress}` +
+        amount +
+        fromPreset +
+        email +
+        buttonBgColor
+      );
     },
-    computed: {
-        url() {
-            console.log(1);
-            return "https://trocador.app/anonpay/?ticker_to=xmr&network_to=Mainnet&amount=0.1&address=89Jb5ZQWpjg5965idsoNA7M5eNDDmqP8jM7cRzJ8xC7cWCNJ5CKjoq7eGxjTqv1wpngNjKuVc7RWJJzpDsxvetiBD1LdB12";
-        },
+
+    onLoad(e) {
+      return console.log(e);
     },
+  },
 });

@@ -1,0 +1,12 @@
+@using BTCPayServer.Plugins.Trocador
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@inject TrocadorService TrocadorService
+@{
+    var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
+    var settings = await TrocadorService.GetTrocadorForStore(storeId);
+    if (settings?.Enabled is true)
+    {
+        <script src="~/Resources/js/trocadorComponent.js"></script>
+    }
+}

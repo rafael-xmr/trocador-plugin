@@ -25,7 +25,11 @@ function getUrl(that) {
     tickerTo = "btc";
     networkTo = "Lightning";
   } else {
-    tickerTo = tickerTo.toLowerCase();
+    tickerTo = tickerTo
+      .replace("_BTCLike", "")
+      .replace("_MoneroLike", "")
+      .replace("_ZcashLike", "")
+      .toLowerCase();
   }
 
   // -- Optional Params --

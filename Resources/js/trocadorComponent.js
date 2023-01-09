@@ -5,7 +5,6 @@ Vue.component("trocador", {
     "toCurrencyAddress",
     "customerEmail",
     "brandColor",
-    "srvModel",
   ],
   data() {
     return {
@@ -14,7 +13,6 @@ Vue.component("trocador", {
   },
   computed: {
     url() {
-      console.log(this.srvModel);
       // -- Required Params --
       let tickerTo = this.toCurrency;
       let networkTo = "Mainnet";
@@ -25,8 +23,6 @@ Vue.component("trocador", {
       } else {
         tickerTo = tickerTo.toLowerCase();
       }
-
-      const tempAddress = "18QgDvPFKV5H7JTpwKFk6H3Eo9JcBK52VH";
 
       // -- Optional Params --
       const amount = this.toCurrencyDue ? `&amount=${this.toCurrencyDue}` : "";
@@ -42,16 +38,12 @@ Vue.component("trocador", {
         "https://trocador.app/anonpay/?" +
         `ticker_to=${tickerTo}` +
         `&network_to=${networkTo}` +
-        `&address=${tempAddress}` +
+        `&address=${this.toCurrencyAddress}` +
         amount +
         fromPreset +
         email +
         buttonBgColor
       );
-    },
-
-    onLoad(e) {
-      return console.log(e);
     },
   },
 });

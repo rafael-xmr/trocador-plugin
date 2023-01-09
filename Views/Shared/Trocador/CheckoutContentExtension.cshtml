@@ -13,8 +13,7 @@
                         :to-currency-due="srvModel.btcDue * (1 + (@settings.AmountMarkupPercentage / 100)) "
                         :to-currency-address="srvModel.btcAddress"
                         :customer-email="srvModel.customerEmail"
-                        :brand-color="srvModel.brandColor"
-                        :srv-model="srvModel">
+                        :brand-color="srvModel.brandColor">
                 <iframe :src="url" style="min-height:300px;width:100%;border:none" id="trocador-iframe" allowtransparency="true"></iframe>
             </trocador>
         </div>

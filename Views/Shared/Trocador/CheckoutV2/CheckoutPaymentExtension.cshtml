@@ -15,7 +15,11 @@
         window.trocadorProps = props;
     </script>
 
-    <template id="trocador-checkout-template" :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage" :fiat-denominated="@(@settings?.FiatDenominated is true ? 1 : 0)">
+    <template id="trocador-checkout-template"
+                :model="srvModel"
+                :markup-percentage="@settings.AmountMarkupPercentage"
+                :fiat-denominated="@(@settings?.FiatDenominated is true ? 1 : 0)"
+                :referral-code="@settings.ReferralCode">
         <iframe :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
     </template>
 

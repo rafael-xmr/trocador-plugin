@@ -1,5 +1,5 @@
 function getUrl(that) {
-  const { model, markupPercentage } = that;
+  const { model, markupPercentage, referralCode } = that;
   const { fiatDenominated } = window.trocadorProps || that;
 
   const {
@@ -71,7 +71,8 @@ function getUrl(that) {
     (customerEmail ? `&email=${customerEmail}` : "") +
     buttonBgColor +
     (fiatCurrency ? `&fiat_equiv=${fiatCurrency}` : "") +
-    (donation ? "&donation=True" : "");
+    (donation ? "&donation=True" : "") +
+    (referralCode ? `&ref=${referralCode}` : "");
 
   return url;
 }

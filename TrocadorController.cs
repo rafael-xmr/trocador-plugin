@@ -48,6 +48,7 @@ namespace BTCPayServer.Plugins.Trocador
                 return;
             vm.Enabled = existing.Enabled;
             vm.FiatDenominated = existing.FiatDenominated;
+            vm.ReferralCode = existing.ReferralCode;
         }
 
         [HttpPost("")]
@@ -66,6 +67,7 @@ namespace BTCPayServer.Plugins.Trocador
             {
                 Enabled = vm.Enabled,
                 FiatDenominated = vm.FiatDenominated,
+                ReferralCode = vm.ReferralCode,
             };
 
             switch (command)

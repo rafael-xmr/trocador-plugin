@@ -5,12 +5,19 @@
 @{
     var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
     var settings = await TrocadorService.GetTrocadorForStore(storeId);
-    if (settings?.Enabled is true)
-    {
-        <template id="trocador-checkout-template" :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage">
-            <iframe :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
-        </template>
+}
+@if (settings?.Enabled is true)
+{
+    <script>
+        const props = {};
+        props.fiatDenominated = @(@settings?.FiatDenominated is true ? 1 : 0);
 
-        <script src="~/Resources/js/trocadorComponent.js"></script>
-    }
+        window.trocadorProps = props;
+    </script>
+
+    <template id="trocador-checkout-template" :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage" :fiat-denominated="@(@settings?.FiatDenominated is true ? 1 : 0)">
+        <iframe :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
+    </template>
+
+    <script src="~/Resources/js/trocadorComponent.js"></script>
 }

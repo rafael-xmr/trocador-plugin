@@ -47,6 +47,7 @@ namespace BTCPayServer.Plugins.Trocador
             if (existing == null)
                 return;
             vm.Enabled = existing.Enabled;
+            vm.FiatDenominated = existing.FiatDenominated;
         }
 
         [HttpPost("")]
@@ -64,6 +65,7 @@ namespace BTCPayServer.Plugins.Trocador
             var TrocadorSettings = new TrocadorSettings()
             {
                 Enabled = vm.Enabled,
+                FiatDenominated = vm.FiatDenominated,
             };
 
             switch (command)

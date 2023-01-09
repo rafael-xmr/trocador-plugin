@@ -1,13 +1,19 @@
-function getUrl(model, markupPercentage) {
+function getUrl(that) {
+  const { model, markupPercentage } = that;
+  const { fiatDenominated } = window.trocadorProps || that;
+
   const {
     paymentMethodId: toCurrency,
     btcDue,
     btcAddress: toCurrencyAddress,
     customerEmail,
     brandColor,
+    orderAmountFiat,
   } = model;
 
-  const toCurrencyDue = btcDue * (1 + markupPercentage / 100);
+  const toCurrencyDue = markupPercentage
+    ? btcDue * (1 + markupPercentage / 100)
+    : btcDue;
 
   // -- Required Params --
   let tickerTo = toCurrency;
@@ -21,9 +27,8 @@ function getUrl(model, markupPercentage) {
   }
 
   // -- Optional Params --
-  const amount = toCurrencyDue ? `&amount=${toCurrencyDue}` : "";
-  const fromPreset = "&ticker_from=xmr" + "&network_from=Mainnet";
-  const email = customerEmail ? `&email=${customerEmail}` : "";
+  let amount = toCurrencyDue && toCurrencyDue;
+  const fromPreset = "&ticker_from=xmr" + "&network_from=Mainnet"; // todo: setting
 
   const btcPayGreen = "51b13e";
   const buttonBgColor = `&buttonbgcolor=${
@@ -32,21 +37,46 @@ function getUrl(model, markupPercentage) {
 
   const colorPreset = "&buttonbgcolor=blue";
 
-  return (
+  let fiatCurrency;
+
+  if (fiatDenominated) {
+    const orderRegex = /(\d+\.\d+)/;
+    const orderMatch = orderRegex.exec(orderAmountFiat);
+
+    amount = orderMatch && orderMatch[0];
+
+    const currencyRegex = /([A-Z]{3})/;
+    const currencyMatch = currencyRegex.exec(orderAmountFiat);
+    fiatCurrency = currencyMatch && currencyMatch[0];
+  }
+
+  let donation;
+
+  if (!amount || amount === "0.00") {
+    amount = null;
+    donation = true;
+  }
+
+  const url =
     "https://trocador.app/anonpay/?" +
     `ticker_to=${tickerTo}` +
     `&network_to=${networkTo}` +
     `&address=${toCurrencyAddress}` +
-    amount +
+    (amount ? `&amount=${amount}` : "") +
     fromPreset +
-    email +
-    buttonBgColor
-  );
+    (customerEmail ? `&email=${customerEmail}` : "") +
+    buttonBgColor +
+    (fiatCurrency ? `&fiat_equiv=${fiatCurrency}` : "") +
+    (donation ? "&donation=True" : "");
+
+  return url;
 }
+
+const PROPS = ["model", "markupPercentage", "fiatDenominated"];
 
 // -- Classic Checkout --
 Vue.component("trocador", {
-  props: ["model", "markupPercentage"],
+  props: PROPS,
   data() {
     return {
       shown: false,
@@ -54,7 +84,7 @@ Vue.component("trocador", {
   },
   computed: {
     url() {
-      return getUrl(this.model, this.markupPercentage);
+      return getUrl(this);
     },
   },
 });
@@ -62,15 +92,10 @@ Vue.component("trocador", {
 // -- Checkout v2 --
 Vue.component("TrocadorCheckout", {
   template: "#trocador-checkout-template",
-  props: ["model", "markupPercentage"],
-  data() {
-    return {
-      shown: false,
-    };
-  },
+  props: PROPS,
   computed: {
     url() {
-      return getUrl(this.model, this.markupPercentage);
+      return getUrl(this);
     },
   },
 });

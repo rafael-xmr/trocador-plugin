@@ -10,7 +10,7 @@
 {
     <div id="Trocador" class="bp-view payment manual-flow" style="padding:0"
         :class="{ active: currentTab == 'undefined' || currentTab == 'Trocador' }">
-        <trocador inline-template :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage">
+        <trocador inline-template :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage" :fiat-denominated="@(@settings?.FiatDenominated is true ? 1 : 0)">
             <iframe :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
         </trocador>
     </div>

@@ -1,0 +1,17 @@
+@using BTCPayServer.Plugins.Trocador
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@inject TrocadorService TrocadorService
+@{
+    var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
+    var settings = await TrocadorService.GetTrocadorForStore(storeId);
+}
+@if (settings?.Enabled is true)
+{
+    <div id="Trocador" class="bp-view payment manual-flow" style="padding:0"
+        :class="{ active: currentTab == 'undefined' || currentTab == 'Trocador' }">
+        <trocador inline-template :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage">
+            <iframe :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
+        </trocador>
+    </div>
+}

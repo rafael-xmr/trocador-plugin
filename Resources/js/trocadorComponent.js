@@ -1,11 +1,52 @@
+function getUrl(model, markupPercentage) {
+  const {
+    paymentMethodId: toCurrency,
+    btcDue,
+    btcAddress: toCurrencyAddress,
+    customerEmail,
+    brandColor,
+  } = model;
+
+  const toCurrencyDue = btcDue * (1 + markupPercentage / 100);
+
+  // -- Required Params --
+  let tickerTo = toCurrency;
+  let networkTo = "Mainnet";
+
+  if (tickerTo.endsWith("LightningLike") || tickerTo.endsWith("LNURLPay")) {
+    tickerTo = "btc";
+    networkTo = "Lightning";
+  } else {
+    tickerTo = tickerTo.toLowerCase();
+  }
+
+  // -- Optional Params --
+  const amount = toCurrencyDue ? `&amount=${toCurrencyDue}` : "";
+  const fromPreset = "&ticker_from=xmr" + "&network_from=Mainnet";
+  const email = customerEmail ? `&email=${customerEmail}` : "";
+
+  const btcPayGreen = "51b13e";
+  const buttonBgColor = `&buttonbgcolor=${
+    brandColor ? brandColor.replace("#", "") : btcPayGreen
+  }`;
+
+  const colorPreset = "&buttonbgcolor=blue";
+
+  return (
+    "https://trocador.app/anonpay/?" +
+    `ticker_to=${tickerTo}` +
+    `&network_to=${networkTo}` +
+    `&address=${toCurrencyAddress}` +
+    amount +
+    fromPreset +
+    email +
+    buttonBgColor
+  );
+}
+
+// -- Classic Checkout --
 Vue.component("trocador", {
-  props: [
-    "toCurrency",
-    "toCurrencyDue",
-    "toCurrencyAddress",
-    "customerEmail",
-    "brandColor",
-  ],
+  props: ["model", "markupPercentage"],
   data() {
     return {
       shown: false,
@@ -13,37 +54,23 @@ Vue.component("trocador", {
   },
   computed: {
     url() {
-      // -- Required Params --
-      let tickerTo = this.toCurrency;
-      let networkTo = "Mainnet";
+      return getUrl(this.model, this.markupPercentage);
+    },
+  },
+});
 
-      if (tickerTo.endsWith("LightningLike") || tickerTo.endsWith("LNURLPay")) {
-        tickerTo = "btc";
-        networkTo = "Lightning";
-      } else {
-        tickerTo = tickerTo.toLowerCase();
-      }
-
-      // -- Optional Params --
-      const amount = this.toCurrencyDue ? `&amount=${this.toCurrencyDue}` : "";
-      const fromPreset = "&ticker_from=xmr" + "&network_from=Mainnet";
-      const email = this.customerEmail ? `&email=${this.customerEmail}` : "";
-
-      const btcPayGreen = "51b13e";
-      const buttonBgColor = `&buttonbgcolor=${this.brandColor || btcPayGreen}`;
-
-      const colorPreset = "&buttonbgcolor=blue";
-
-      return (
-        "https://trocador.app/anonpay/?" +
-        `ticker_to=${tickerTo}` +
-        `&network_to=${networkTo}` +
-        `&address=${this.toCurrencyAddress}` +
-        amount +
-        fromPreset +
-        email +
-        buttonBgColor
-      );
+// -- Checkout v2 --
+Vue.component("TrocadorCheckout", {
+  template: "#trocador-checkout-template",
+  props: ["model", "markupPercentage"],
+  data() {
+    return {
+      shown: false,
+    };
+  },
+  computed: {
+    url() {
+      return getUrl(this.model, this.markupPercentage);
     },
   },
 });

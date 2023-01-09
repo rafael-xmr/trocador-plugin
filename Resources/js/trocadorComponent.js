@@ -3,6 +3,8 @@ function getUrl(that) {
   const { fiatDenominated } = window.trocadorProps || that;
 
   const {
+    storeName,
+    itemDesc,
     paymentMethodId: toCurrency,
     btcDue,
     btcAddress: toCurrencyAddress,
@@ -63,6 +65,8 @@ function getUrl(that) {
     `&network_to=${networkTo}` +
     `&address=${toCurrencyAddress}` +
     (amount ? `&amount=${amount}` : "") +
+    (storeName ? `&name=${storeName}` : "") +
+    (itemDesc ? `&description=${itemDesc}` : "") +
     fromPreset +
     (customerEmail ? `&email=${customerEmail}` : "") +
     buttonBgColor +

@@ -3,13 +3,22 @@
 @using Newtonsoft.Json.Linq
 @inject TrocadorService TrocadorService
 @{
-    const string id = "Trocador";
+    const string defaultId = "Trocador";
+
     var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
     var settings = await TrocadorService.GetTrocadorForStore(storeId);
-    if (settings?.Enabled is true)
+
+    if (settings?.Enabled is not true)
     {
-        <div class="payment-tabs__tab py-0" id="Trocador-tab" v-on:click="switchTab('Trocador')" v-bind:class="{ 'active': currentTab == 'Trocador'}" v-if="!srvModel.paymentMethodId.endsWith('LNURLPAY')">
-            <span>{{$t("Altcoins (@id)")}}</span>
-        </div>
+        return;
     }
-}
+
+    string customId = settings?.PaymentMethodId;
+    string displayId = (!string.IsNullOrEmpty(customId) ? customId : defaultId);
+} 
+
+<div class="payment-tabs__tab" id="@(defaultId)-tab" v-on:click="switchTab('@(defaultId)')"
+    v-bind:class="{ 'active': currentTab == '@(defaultId)'}" v-if="!srvModel.paymentMethodId.endsWith('LNURLPAY')">
+    <span>@displayId</span>
+</div>
+        

@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using BTCPayServer.Abstractions.Constants;
 using BTCPayServer.Client;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 
 namespace BTCPayServer.Plugins.Trocador
 {
@@ -12,11 +14,15 @@ namespace BTCPayServer.Plugins.Trocador
     [Route("plugins/{storeId}/Trocador")]
     public class TrocadorController : Controller
     {
+        private readonly BTCPayNetworkProvider _btcPayNetworkProvider;
+
         private readonly BTCPayServerClient _btcPayServerClient;
         private readonly TrocadorService _TrocadorService;
 
-        public TrocadorController(BTCPayServerClient btcPayServerClient, TrocadorService TrocadorService)
+        public TrocadorController(BTCPayNetworkProvider btcPayNetworkProvider,
+            BTCPayServerClient btcPayServerClient, TrocadorService TrocadorService)
         {
+            _btcPayNetworkProvider = btcPayNetworkProvider;
             _btcPayServerClient = btcPayServerClient;
             _TrocadorService = TrocadorService;
         }
@@ -39,6 +45,37 @@ namespace BTCPayServer.Plugins.Trocador
             }
 
             SetExistingValues(Trocador, vm);
+
+            if (vm.Enabled)
+            {
+                Dictionary<string, string> newPaymentMethods = new Dictionary<string, string>();
+
+                var paymentMethods = (await _btcPayServerClient.GetStorePaymentMethods(storeId));
+
+                foreach (var paymentMethod in paymentMethods)
+                {
+                    object data = paymentMethod.Value.Data;
+
+                    string cryptoCode = paymentMethod.Key.ToString();
+                    var network = _btcPayNetworkProvider.GetNetwork(cryptoCode);
+                    string label = network != null ? network.DisplayName : cryptoCode;
+
+                    if (cryptoCode == label && (cryptoCode.EndsWith("LightningNetwork") || cryptoCode.EndsWith("LNURLPAY")))
+                    {
+                        label = "Lightning";
+                        cryptoCode = "BTC_LightningLike";
+                    }
+
+
+                    if (!newPaymentMethods.ContainsKey(label))
+                    {
+                        newPaymentMethods[label] = cryptoCode;
+                    }
+                }
+
+                vm.PaymentMethods = newPaymentMethods;
+            }
+
             return View(vm);
         }
 
@@ -48,7 +85,9 @@ namespace BTCPayServer.Plugins.Trocador
                 return;
             vm.Enabled = existing.Enabled;
             vm.FiatDenominated = existing.FiatDenominated;
+            vm.DefaultPaymentMethodId = existing.DefaultPaymentMethodId;
             vm.ReferralCode = existing.ReferralCode;
+            vm.PaymentMethodId = existing.PaymentMethodId;
         }
 
         [HttpPost("")]
@@ -67,7 +106,9 @@ namespace BTCPayServer.Plugins.Trocador
             {
                 Enabled = vm.Enabled,
                 FiatDenominated = vm.FiatDenominated,
+                DefaultPaymentMethodId = vm.DefaultPaymentMethodId,
                 ReferralCode = vm.ReferralCode,
+                PaymentMethodId = vm.PaymentMethodId,
             };
 
             switch (command)
@@ -75,7 +116,7 @@ namespace BTCPayServer.Plugins.Trocador
                 case "save":
                     await _TrocadorService.SetTrocadorForStore(storeId, TrocadorSettings);
                     TempData["SuccessMessage"] = "Trocador settings modified";
-                    return RedirectToAction(nameof(UpdateTrocadorSettings), new {storeId});
+                    return RedirectToAction(nameof(UpdateTrocadorSettings), new { storeId });
 
                 default:
                     return View(vm);

@@ -3,13 +3,19 @@
 @using Newtonsoft.Json.Linq
 @inject TrocadorService TrocadorService
 @{
-    const string id = "Trocador";
     var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
     var settings = await TrocadorService.GetTrocadorForStore(storeId);
-    if (settings?.Enabled is true)
+
+    if (settings?.Enabled is not true)
     {
-        <a href="#@id" class="btcpay-pill m-0 payment-method" :class="{ active: pmId === '@id' }" v-on:click.prevent="changePaymentMethod('@id')">
-            @id
-        </a>
+        return;
     }
-}
+
+    const string defaultId = "Trocador";
+
+    string customId = settings.PaymentMethodId;
+    string displayId = (!string.IsNullOrEmpty(customId) ? customId : defaultId);
+}  
+<a href="#@defaultId" class="btcpay-pill m-0 payment-method" :class="{ active: pmId === '@defaultId' }" v-on:click.prevent="changePaymentMethod('@defaultId')">
+    @displayId
+</a>

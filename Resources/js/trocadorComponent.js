@@ -1,17 +1,23 @@
 function getUrl(that) {
-  const { model, markupPercentage, referralCode } = that;
-  const { fiatDenominated } = window.trocadorProps || that;
+  const { model, markupPercentage, referralCode, address } = that;
+  const { fiatDenominated, defaultPaymentMethodId } =
+    window.trocadorProps || that;
 
   const {
     storeName,
     itemDesc,
-    paymentMethodId: toCurrency,
+    paymentMethodId,
     btcDue,
     btcAddress: toCurrencyAddress,
     customerEmail,
     brandColor,
     orderAmountFiat,
   } = model;
+
+  const toCurrency =
+    defaultPaymentMethodId && defaultPaymentMethodId !== "Auto"
+      ? defaultPaymentMethodId
+      : paymentMethodId;
 
   const toCurrencyDue = markupPercentage
     ? btcDue * (1 + markupPercentage / 100)
@@ -67,7 +73,7 @@ function getUrl(that) {
     "https://trocador.app/anonpay/?" +
     `ticker_to=${tickerTo}` +
     `&network_to=${networkTo}` +
-    `&address=${toCurrencyAddress}` +
+    `&address=${address || toCurrencyAddress}` +
     (amount ? `&amount=${amount}` : "") +
     (storeName ? `&name=${storeName}` : "") +
     (itemDesc ? `&description=${itemDesc}` : "") +
@@ -81,13 +87,19 @@ function getUrl(that) {
   return url;
 }
 
-const PROPS = ["model", "markupPercentage", "fiatDenominated"];
+const PROPS = [
+  "model",
+  "markupPercentage",
+  "fiatDenominated",
+  "defaultPaymentMethodId",
+];
 
 // -- Classic Checkout --
 Vue.component("trocador", {
   props: PROPS,
   data() {
     return {
+      address: undefined,
       shown: false,
     };
   },
@@ -96,15 +108,79 @@ Vue.component("trocador", {
       return getUrl(this);
     },
   },
+  mounted() {
+    this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      const defaultPaymentMethodId =
+        this.defaultPaymentMethodId ||
+        window.trocadorProps.defaultPaymentMethodId;
+
+      const url = `/i/${this.model.invoiceId}/status?invoiceId=${this.model.invoiceId}&paymentMethodId=${defaultPaymentMethodId}`;
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        this.updateData(data);
+      }
+    },
+    updateData(data) {
+      const { invoiceBitcoinUrl } = data;
+
+      this.address = invoiceBitcoinUrl.substring(
+        invoiceBitcoinUrl.indexOf(":") > -1
+          ? invoiceBitcoinUrl.indexOf(":") + 1
+          : 0,
+        invoiceBitcoinUrl.indexOf("?") > -1
+          ? invoiceBitcoinUrl.indexOf("?")
+          : invoiceBitcoinUrl.length
+      );
+    },
+  },
 });
 
 // -- Checkout v2 --
 Vue.component("TrocadorCheckout", {
   template: "#trocador-checkout-template",
   props: PROPS,
+  data() {
+    return {
+      address: undefined,
+      shown: false,
+    };
+  },
   computed: {
     url() {
       return getUrl(this);
+    },
+  },
+  mounted() {
+    this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      const defaultPaymentMethodId =
+        this.defaultPaymentMethodId ||
+        window.trocadorProps.defaultPaymentMethodId;
+
+      const url = `/i/${this.model.invoiceId}/status?invoiceId=${this.model.invoiceId}&paymentMethodId=${defaultPaymentMethodId}`;
+      const response = await fetch(url);
+      if (response.ok) {
+        const data = await response.json();
+        this.updateData(data);
+      }
+    },
+    updateData(data) {
+      const { invoiceBitcoinUrl } = data;
+
+      this.address = invoiceBitcoinUrl.substring(
+        invoiceBitcoinUrl.indexOf(":") > -1
+          ? invoiceBitcoinUrl.indexOf(":") + 1
+          : 0,
+        invoiceBitcoinUrl.indexOf("?") > -1
+          ? invoiceBitcoinUrl.indexOf("?")
+          : invoiceBitcoinUrl.length
+      );
     },
   },
 });

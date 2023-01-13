@@ -5,17 +5,18 @@
 @{
     var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
     var settings = await TrocadorService.GetTrocadorForStore(storeId);
+
+    if (settings?.Enabled is not true)
+    {
+        return;
+    }
 }
-@if (settings?.Enabled is true)
-{
-    <div id="Trocador" class="bp-view payment manual-flow" style="padding:0"
-        :class="{ active: currentTab == 'undefined' || currentTab == 'Trocador' }">
-        <trocador inline-template
-                    :model="srvModel"
-                    :markup-percentage="@settings.AmountMarkupPercentage"
-                    :fiat-denominated="@(@settings?.FiatDenominated is true ? 1 : 0)"
-                    :referral-code="@settings.ReferralCode">
-            <iframe :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
-        </trocador>
-    </div>
-}
+
+<div id="Trocador" class="bp-view payment manual-flow" style="padding:0"
+    :class="{ active: currentTab == 'undefined' || currentTab == 'Trocador' }">
+    <trocador inline-template :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage"
+        :fiat-denominated="@(@settings?.FiatDenominated is true ? 1 : 0)" :referral-code="@settings.ReferralCode"
+        :default-payment-method-id="'@settings.DefaultPaymentMethodId'">
+        <iframe v-if="url" :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
+    </trocador>
+</div>

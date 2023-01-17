@@ -1,22 +1,45 @@
 <Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10</LangVersion>
+    <Configurations>Debug;Release;Altcoins-Debug</Configurations>
+    <Platforms>AnyCPU</Platforms>
+  </PropertyGroup>
+
+  <!-- Plugin specific properties -->
+  <PropertyGroup>
+      <Title>Trocador</Title>
+      <Description>Embed a trocador.app conversion widget on the payment checkout to allow customers to pay with altcoins in a private manner.</Description>
+      <Authors>saltrafael</Authors>
+      <Version>1.1.0</Version>
+  </PropertyGroup>
+
+  <!-- Plugin development properties -->
+  <PropertyGroup>
     <AddRazorSupportForMvc>true</AddRazorSupportForMvc>
     <PreserveCompilationContext>false</PreserveCompilationContext>
     <GenerateEmbeddedFilesManifest>true</GenerateEmbeddedFilesManifest>
-    <AssemblyVersion>1.0.9</AssemblyVersion>
-
   </PropertyGroup>
+
+  <!-- This will make sure that referencing BTCPayServer doesn't put any artifact in the published directory -->
+  <ItemDefinitionGroup>
+    <ProjectReference>
+      <Properties>StaticWebAssetsEnabled=false</Properties>
+      <Private>false</Private>
+      <ExcludeAssets>runtime;native;build;buildTransitive;contentFiles</ExcludeAssets>
+    </ProjectReference>
+  </ItemDefinitionGroup>
+
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
-    <ProjectReference Include="..\..\BTCPayServer.Abstractions\BTCPayServer.Abstractions.csproj" />
-    <ProjectReference Include="..\..\BTCPayServer.Client\BTCPayServer.Client.csproj" />
-    <ProjectReference Include="..\..\BTCPayServer.Common\BTCPayServer.Common.csproj" />
+    <ProjectReference Include="..\..\submodules\btcpayserver\BTCPayServer\BTCPayServer.csproj" />
     <EmbeddedResource Include="Resources\**" />
   </ItemGroup>
+
   <ItemGroup>
     <Folder Include="Views\Shared" />
   </ItemGroup>
+
   <ItemGroup>
     <Content Include="Resources\js\trocadorComponent.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>

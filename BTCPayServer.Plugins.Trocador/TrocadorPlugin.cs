@@ -7,14 +7,9 @@ namespace BTCPayServer.Plugins.Trocador
 {
     public class TrocadorPlugin : BaseBTCPayServerPlugin
     {
-        public override string Identifier => "BTCPayServer.Plugins.Trocador";
-        public override string Name => "Trocador";
-        public override string Description =>
-            "Allows you to embed a trocador.app conversion screen to allow customers to pay with altcoins.";
-
         public override IBTCPayServerPlugin.PluginDependency[] Dependencies { get; } =
         {
-            new() { Identifier = nameof(BTCPayServer), Condition = ">=1.7.0.0" }
+            new() { Identifier = nameof(BTCPayServer), Condition = ">=1.7.4" }
         };
 
         public override void Execute(IServiceCollection services)

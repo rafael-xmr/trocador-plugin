@@ -15,7 +15,12 @@
 
     string customId = settings.PaymentMethodId;
     string displayId = (!string.IsNullOrEmpty(customId) ? customId : defaultId);
-}  
+    int shouldSwitch = settings.ShowFirst is true ? 1 : 0;
+}
+
 <a href="#@defaultId" class="btcpay-pill m-0 payment-method" :class="{ active: pmId === '@defaultId' }" v-on:click.prevent="changePaymentMethod('@defaultId')">
-    @displayId
+    <trocador-tab inline-template :switch-tab="() => changePaymentMethod('@defaultId')" :current-tab="pmId"
+        :should-switch="@shouldSwitch">
+        <span>@displayId</span>
+    </trocador-tab>
 </a>

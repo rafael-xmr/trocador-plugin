@@ -14,9 +14,9 @@
 
 <div id="Trocador" class="bp-view payment manual-flow" style="padding-left: 10px;padding-right: 10px;"
     :class="{ active: currentTab == 'undefined' || currentTab == 'Trocador' }">
-    <trocador inline-template :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage"
+    <trocador-checkout inline-template :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage"
         :fiat-denominated="@(@settings?.FiatDenominated is true ? 1 : 0)" :referral-code="@settings.ReferralCode"
-        :default-payment-method-id="'@settings.DefaultPaymentMethodId'">
+        :default-payment-method-id="'@settings.DefaultPaymentMethodId'" :preselected-coin="'@settings.PreselectedCoin'">
         <iframe v-if="url" :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
-    </trocador>
+    </trocador-checkout>
 </div>

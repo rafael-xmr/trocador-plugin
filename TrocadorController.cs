@@ -63,14 +63,11 @@ namespace BTCPayServer.Plugins.Trocador
                     if (cryptoCode == label && (cryptoCode.EndsWith("LightningNetwork") || cryptoCode.EndsWith("LNURLPAY")))
                     {
                         label = "Lightning";
-                        cryptoCode = "BTC_LightningLike";
                     }
 
 
-                    if (!newPaymentMethods.ContainsKey(label))
-                    {
-                        newPaymentMethods[label] = cryptoCode;
-                    }
+                    newPaymentMethods[label] = cryptoCode;
+
                 }
 
                 vm.PaymentMethods = newPaymentMethods;
@@ -88,6 +85,8 @@ namespace BTCPayServer.Plugins.Trocador
             vm.DefaultPaymentMethodId = existing.DefaultPaymentMethodId;
             vm.ReferralCode = existing.ReferralCode;
             vm.PaymentMethodId = existing.PaymentMethodId;
+            vm.PreselectedCoin = existing.PreselectedCoin;
+            vm.ShowFirst = existing.ShowFirst;
         }
 
         [HttpPost("")]
@@ -109,6 +108,8 @@ namespace BTCPayServer.Plugins.Trocador
                 DefaultPaymentMethodId = vm.DefaultPaymentMethodId,
                 ReferralCode = vm.ReferralCode,
                 PaymentMethodId = vm.PaymentMethodId,
+                PreselectedCoin = vm.PreselectedCoin,
+                ShowFirst = vm.ShowFirst,
             };
 
             switch (command)

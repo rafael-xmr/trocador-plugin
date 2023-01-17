@@ -16,14 +16,16 @@
     const props = {};
     props.fiatDenominated = @(settings?.FiatDenominated is true ? 1 : 0);
     props.defaultPaymentMethodId = "@settings.DefaultPaymentMethodId";
+    props.preselectedCoin = "@settings.PreselectedCoin";
 
     window.trocadorProps = props;
 </script>
 
 <template id="trocador-checkout-template" :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage"
-:fiat-denominated="@(settings?.FiatDenominated is true ? 1 : 0)" :referral-code="@settings.ReferralCode"
-:default-payment-method-id="@settings.DefaultPaymentMethodId">
+    :fiat-denominated="@(settings?.FiatDenominated is true ? 1 : 0)" :referral-code="@settings.ReferralCode"
+    :default-payment-method-id="'@settings.DefaultPaymentMethodId'" :preselected-coin="'@settings.PreselectedCoin'">
     <iframe :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
 </template>
 
 <script src="~/Resources/js/trocadorComponent.js"></script>
+<script src="~/Resources/js/trocadorTabComponent.js"></script>

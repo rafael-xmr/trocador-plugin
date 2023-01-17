@@ -1,6 +1,6 @@
 function getUrl(that) {
   const { model, markupPercentage, referralCode, address } = that;
-  const { fiatDenominated, defaultPaymentMethodId } =
+  const { fiatDenominated, defaultPaymentMethodId, preselectedCoin } =
     window.trocadorProps || that;
 
   const {
@@ -27,7 +27,7 @@ function getUrl(that) {
   let tickerTo = toCurrency;
   let networkTo = "Mainnet";
 
-  if (tickerTo.endsWith("LightningLike") || tickerTo.endsWith("LNURLPay")) {
+  if (tickerTo.includes("Lightning") || tickerTo.includes("LNURL")) {
     tickerTo = "btc";
     networkTo = "Lightning";
   } else {
@@ -35,12 +35,20 @@ function getUrl(that) {
       .replace("_BTCLike", "")
       .replace("_MoneroLike", "")
       .replace("_ZcashLike", "")
+      .replace(/-.*/g, "")
       .toLowerCase();
   }
 
   // -- Optional Params --
   let amount = toCurrencyDue && toCurrencyDue;
-  const fromPreset = "&ticker_from=xmr" + "&network_from=Mainnet"; // todo: setting
+
+  let fromPreset;
+
+  if (preselectedCoin) {
+    const [tickerFrom, networkFrom = "Mainnet"] = preselectedCoin.split("-");
+
+    fromPreset = `&ticker_from=${tickerFrom.toLowerCase()}&network_from=${networkFrom}`;
+  }
 
   const btcPayGreen = "51b13e";
   const buttonBgColor = `&buttonbgcolor=${
@@ -52,13 +60,29 @@ function getUrl(that) {
   let fiatCurrency;
 
   if (fiatDenominated) {
-    const orderRegex = /(\d+\.\d+)/;
-    const orderMatch = orderRegex.exec(orderAmountFiat);
+    const amountRegex = /([\d,.]+)/;
+    const amountMatch = orderAmountFiat.replace(/[  ]/g, "").match(amountRegex);
+    const formattedAmount = amountMatch && amountMatch[0];
 
-    amount = orderMatch && orderMatch[0];
+    const commaDecimal = formattedAmount.lastIndexOf(",");
+    const pointDecimal = formattedAmount.lastIndexOf(".");
+    const decimalSeparatorIndex =
+        commaDecimal > pointDecimal
+            ? commaDecimal
+            : commaDecimal === pointDecimal
+            ? formattedAmount.length
+            : pointDecimal;
+
+    const integerAmount = formattedAmount.substring(0, decimalSeparatorIndex);
+    const decimals =
+        decimalSeparatorIndex < formattedAmount.length
+            ? '.' + formattedAmount.substring(decimalSeparatorIndex + 1, formattedAmount.length)
+            : "";
+
+    amount = integerAmount.replace(/[,.]/g, '') + decimals;
 
     const currencyRegex = /([A-Z]{3})/;
-    const currencyMatch = currencyRegex.exec(orderAmountFiat);
+    const currencyMatch = orderAmountFiat.match(currencyRegex);
     fiatCurrency = currencyMatch && currencyMatch[0];
   }
 
@@ -68,6 +92,10 @@ function getUrl(that) {
     amount = null;
     donation = true;
   }
+
+  // Where the checkout page will open
+  const checkoutTarget = "&target=blank";
+
 
   const url =
     "https://trocador.app/anonpay/?" +
@@ -82,7 +110,8 @@ function getUrl(that) {
     buttonBgColor +
     (fiatCurrency ? `&fiat_equiv=${fiatCurrency}` : "") +
     (donation ? "&donation=True" : "") +
-    (referralCode ? `&ref=${referralCode}` : "");
+    (referralCode ? `&ref=${referralCode}` : "") +
+    checkoutTarget;
 
   return url;
 }
@@ -92,54 +121,9 @@ const PROPS = [
   "markupPercentage",
   "fiatDenominated",
   "defaultPaymentMethodId",
+  "preselectedCoin",
 ];
 
-// -- Classic Checkout --
-Vue.component("trocador", {
-  props: PROPS,
-  data() {
-    return {
-      address: undefined,
-      shown: false,
-    };
-  },
-  computed: {
-    url() {
-      return getUrl(this);
-    },
-  },
-  mounted() {
-    this.fetchData();
-  },
-  methods: {
-    async fetchData() {
-      const defaultPaymentMethodId =
-        this.defaultPaymentMethodId ||
-        window.trocadorProps.defaultPaymentMethodId;
-
-      const url = `/i/${this.model.invoiceId}/status?invoiceId=${this.model.invoiceId}&paymentMethodId=${defaultPaymentMethodId}`;
-      const response = await fetch(url);
-      if (response.ok) {
-        const data = await response.json();
-        this.updateData(data);
-      }
-    },
-    updateData(data) {
-      const { invoiceBitcoinUrl } = data;
-
-      this.address = invoiceBitcoinUrl.substring(
-        invoiceBitcoinUrl.indexOf(":") > -1
-          ? invoiceBitcoinUrl.indexOf(":") + 1
-          : 0,
-        invoiceBitcoinUrl.indexOf("?") > -1
-          ? invoiceBitcoinUrl.indexOf("?")
-          : invoiceBitcoinUrl.length
-      );
-    },
-  },
-});
-
-// -- Checkout v2 --
 Vue.component("TrocadorCheckout", {
   template: "#trocador-checkout-template",
   props: PROPS,
@@ -163,11 +147,13 @@ Vue.component("TrocadorCheckout", {
         this.defaultPaymentMethodId ||
         window.trocadorProps.defaultPaymentMethodId;
 
-      const url = `/i/${this.model.invoiceId}/status?invoiceId=${this.model.invoiceId}&paymentMethodId=${defaultPaymentMethodId}`;
-      const response = await fetch(url);
-      if (response.ok) {
-        const data = await response.json();
-        this.updateData(data);
+      if (defaultPaymentMethodId && defaultPaymentMethodId !== "Auto") {
+        const url = `/i/${this.model.invoiceId}/status?invoiceId=${this.model.invoiceId}&paymentMethodId=${defaultPaymentMethodId}`;
+        const response = await fetch(url);
+        if (response.ok) {
+          const data = await response.json();
+          this.updateData(data);
+        }
       }
     },
     updateData(data) {

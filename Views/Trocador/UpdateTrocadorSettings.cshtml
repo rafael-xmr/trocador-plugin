@@ -1,4 +1,4 @@
-@using BTCPayServer.Abstractions.Extensions
+﻿@using BTCPayServer.Abstractions.Extensions
 @model BTCPayServer.Plugins.Trocador.UpdateTrocadorSettingsViewModel
 @{
     ViewData.SetActivePage("Trocador", "Trocador", "Trocador");
@@ -33,6 +33,18 @@
                             amounts in fiat?</label>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <div class="d-flex align-items-center">
+                        <input asp-for="ShowFirst" type="checkbox" class="btcpay-toggle me-2" />
+                        <label asp-for="ShowFirst" class="form-label mb-0 me-1">Show Trocador first on
+                            invoice?</label>
+
+                        <span class="form-text">On invoice creation, Trocador will be active tab shown first.
+                        </span>
+                    </div>
+                </div>
+
 
                 <div class="form-group">
                     <label class="form-label" asp-for="DefaultPaymentMethodId">Default wallet to receive:</label>
@@ -71,16 +83,37 @@
                     </div>
                 </div>
 
-                @* <div class="form-group">
-                    <label class="form-label d-flex flex-column" asp-for="DefaultPaymentMethodId">The preselected Coin to be
-                    sent:</label>
-                    <select asp-for="DefaultPaymentMethodId" class="form-select" id="default-payment-method">
-                    <option value="BTC" selected asp-for="DefaultPaymentMethodId">Monero</option>
-                    <option value="LN" asp-for="DefaultPaymentMethodId">USDT (ERC20)</option>
+
+                <div class="form-group">
+                    <label class="form-label d-flex flex-column" asp-for="PreselectedCoin">The preselected Coin to be
+                        sent:</label>
+                    <select asp-for="PreselectedCoin" class="form-select" id="default-payment-method">
+                        <option value="XMR" asp-for="PreselectedCoin">Monero</option>
+                        <option value="BTC" asp-for="PreselectedCoin">Bitcoin</option>
+                        <option value="BTC-BEP20" asp-for="PreselectedCoin">Bitcoin (BSC)</option>
+                        <option value="BTC-Lightning" asp-for="PreselectedCoin">Bitcoin (Lightning)</option>
+                        <option value="ETH" asp-for="PreselectedCoin">Ethereum</option>
+                        <option value="LTC" asp-for="PreselectedCoin">Litecoin</option>
+                        <option value="LTC-BEP20" asp-for="PreselectedCoin">Litecoin (BSC)</option>
+                        <option value="BNB-BEP20" asp-for="PreselectedCoin">Binance Coin (BSC)</option>
+                        <option value="ADA" asp-for="PreselectedCoin">Cardano</option>
+                        <option value="DOGE" asp-for="PreselectedCoin">Dogecoin</option>
+                        <option value="MATIC-ERC20" asp-for="PreselectedCoin">Polygon (ERC20)</option>
+                        <option value="MATIC" asp-for="PreselectedCoin">Polygon (Polygon)</option>
+                        <option value="SOL" asp-for="PreselectedCoin">Solana</option>
+                        <option value="WBTC-ERC20" asp-for="PreselectedCoin">Wrapped BTC</option>
+                        <option value="BUSD-BEP20" asp-for="PreselectedCoin">Binance USD</option>
+                        <option value="DAI-ERC20" asp-for="PreselectedCoin">DAI</option>
+                        <option value="GUSD-ERC20" asp-for="PreselectedCoin">GUSD</option>
+                        <option value="USDP-ERC20" asp-for="PreselectedCoin">USDP</option>
+                        <option value="TUSD-ERC20" asp-for="PreselectedCoin">TUSD</option>
+                        <option value="USDC-ERC20" asp-for="PreselectedCoin">USDC</option>
+                        <option value="USDT-ERC20" asp-for="PreselectedCoin">USDT</option>
                     </select>
                     <span class="form-text">What currency would your customers prefer to pay in? They can change it, this is
-                    just the first one they see</span>
-                    </div> *@
+                        just the first one they see. You can try setting the payment method name above as "Stablecoins" and
+                        choose "USDT" here for example.</span>
+                </div>
             }
 
             <button name="command" type="submit" value="save" class="btn btn-primary">Submit</button>

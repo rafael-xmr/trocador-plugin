@@ -10,5 +10,7 @@ namespace BTCPayServer.Plugins.Trocador
         public string ReferralCode { get; set; }
         public string PaymentMethodId { get; set; }
         public Dictionary<string, string> PaymentMethods { get; set; }
+        public string PreselectedCoin { get; set; } = "XMR";
+        public bool ShowFirst { get; set; } = false;
     }
 }

@@ -1,4 +1,4 @@
-﻿@using BTCPayServer.Abstractions.Extensions
+@using BTCPayServer.Abstractions.Extensions
 @model BTCPayServer.Plugins.Trocador.UpdateTrocadorSettingsViewModel
 @{
     ViewData.SetActivePage("Trocador", "Trocador", "Trocador");
@@ -46,6 +46,10 @@
                             <option value="@paymentMethodId" asp-for="DefaultPaymentMethodId">@paymentMethodLabel</option>
                         }
                     </select>
+                    <span class="form-text">Keep in mind it is not advised to choose the Lightning Network as the default
+                        wallet to receive payments from Trocador, as this may worsen conversion rates and reduce number of
+                        coins accepted.
+                    </span>
                 </div>
 
                 <div class="form-group">

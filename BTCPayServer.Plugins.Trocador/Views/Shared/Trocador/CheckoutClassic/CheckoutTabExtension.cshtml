@@ -18,10 +18,32 @@
     int shouldSwitch = settings.ShowFirst is true ? 1 : 0;
 }
 
-<div class="payment-tabs__tab" id="@defaultId-tab" v-on:click="switchTab('@defaultId')"
-    v-bind:class="{ 'active': currentTab == '@defaultId'}">
-    <trocador-tab inline-template :switch-tab="() => switchTab('@defaultId')" :current-tab="currentTab"
-        :should-switch="@shouldSwitch">
+<template v-if="@shouldSwitch">
+    <div
+        class="payment-tabs__tab"
+        id="@defaultId-tab"
+        v-on:click="switchTab('@defaultId')"
+        v-bind:class="{ 'active': currentTab == '@defaultId'}"
+    >
+        <trocador-tab
+            inline-template
+            :switch-tab="() => switchTab('@defaultId')"
+            :current-tab="currentTab"
+            :should-switch="@shouldSwitch"
+        >
+            <span>@displayId</span>
+        </trocador-tab>
+    </div>
+</template>
+<template v-else>
+    <div
+        class="payment-tabs__tab"
+        id="@defaultId-tab"
+        v-on:click="switchTab('@defaultId')"
+        v-bind:class="{ 'active': currentTab == '@defaultId'}"
+    >
         <span>@displayId</span>
-    </trocador-tab>
-</div>
+    </div>
+</template>
+
+<script src="~/Resources/js/trocadorTabComponent.js"></script>

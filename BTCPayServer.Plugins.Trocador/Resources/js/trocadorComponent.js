@@ -55,8 +55,6 @@ function getUrl(that) {
     brandColor ? brandColor.replace("#", "") : btcPayGreen
   }`;
 
-  const colorPreset = "&buttonbgcolor=blue";
-
   let fiatCurrency;
 
   if (fiatDenominated) {

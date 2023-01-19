@@ -143,7 +143,7 @@ Vue.component("TrocadorCheckout", {
     async fetchData() {
       const defaultPaymentMethodId =
         this.defaultPaymentMethodId ||
-        window.trocadorProps.defaultPaymentMethodId;
+        window.trocadorProps?.defaultPaymentMethodId;
 
       if (defaultPaymentMethodId && defaultPaymentMethodId !== "Auto") {
         const url = `/i/${this.model.invoiceId}/status?invoiceId=${this.model.invoiceId}&paymentMethodId=${defaultPaymentMethodId}`;

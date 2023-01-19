@@ -1,0 +1,125 @@
+@using System.Text.RegularExpressions;
+@using BTCPayServer.Plugins.Trocador
+@using Newtonsoft.Json
+@using Newtonsoft.Json.Linq
+@inject TrocadorService TrocadorService
+@{
+    var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
+    var settings = await TrocadorService.GetTrocadorForStore(storeId);
+
+    if (settings?.Enabled is not true)
+    {
+        return;
+    }
+
+    var markupPercentage = settings.AmountMarkupPercentage;
+    var referralCode = settings.ReferralCode;
+    var fiatDenominated = settings.FiatDenominated;
+
+    string toCurrency = settings.DefaultPaymentMethodId != "Auto" && settings.DefaultPaymentMethodId != null ?
+    settings.DefaultPaymentMethodId :
+    Model.PaymentMethodId;
+
+    string toCurrencyDue = markupPercentage > 0
+    ? Model.BtcDue * (1 + markupPercentage / 100)
+    : Model.BtcDue;
+
+    @* -- Required Params -- *@
+    var tickerTo = toCurrency;
+    var networkTo = "Mainnet";
+
+    if (tickerTo.Contains("Lightning") is true || tickerTo.Contains("LNURL") is true)
+    {
+        tickerTo = "btc";
+        networkTo = "Lightning";
+    }
+    else
+    {
+        tickerTo = Regex.Replace(tickerTo
+        .Replace("_BTCLike", "")
+        .Replace("_MoneroLike", "")
+        .Replace("_ZcashLike", "")
+        .ToLower(), @"-.*", "");
+    }
+
+    @* -- Optional Params -- *@
+    var amount = toCurrencyDue;
+
+    var fromPreset = "";
+
+    if (settings.PreselectedCoin != null)
+    {
+        var tickerFrom = "";
+        var networkFrom = "Mainnet";
+
+        string[] parts = settings.PreselectedCoin.Split(',');
+        for (int i = 0; i < parts.Length; i++)
+        {
+            string currentPart = parts[i];
+
+            if (i == 0)
+            {
+                tickerFrom = currentPart.ToLower();
+            }
+            else
+            {
+                networkFrom = currentPart;
+            }
+        }
+
+        fromPreset = "&ticker_from=" + tickerFrom + "&network_from=" + networkFrom;
+    }
+
+    string btcPayGreen = "51b13e";
+    string buttonBgColor = "&buttonbgcolor=" + (!string.IsNullOrWhiteSpace(Model.BrandColor) ? Model.BrandColor.Replace("#",
+    "") : btcPayGreen);
+
+    var fiatCurrency = "";
+    string orderAmountFiat = Model.OrderAmountFiat;
+
+    if (fiatDenominated)
+    {
+        string amountRegex = @"([\d,.]+)";
+        var amountMatch = Regex.Match(Regex.Replace(orderAmountFiat, @"[  ]", ""), amountRegex);
+        string formattedAmount = amountMatch.Success ? amountMatch.Value : "";
+
+        var commaDecimal = formattedAmount.LastIndexOf(",");
+        var pointDecimal = formattedAmount.LastIndexOf(".");
+        var decimalSeparatorIndex = commaDecimal > pointDecimal ? commaDecimal : commaDecimal == pointDecimal ?
+        formattedAmount.Length : pointDecimal;
+
+        var integerAmount = formattedAmount.Substring(0, formattedAmount.Length - decimalSeparatorIndex);
+        var decimals = decimalSeparatorIndex < formattedAmount.Length ? '.' + formattedAmount.Substring(decimalSeparatorIndex +
+        1, formattedAmount.Length - decimalSeparatorIndex - 1) : "";
+
+        amount = Regex.Replace(integerAmount, @"[,.]", "") + decimals;
+
+        string currencyRegex = @"([A-Z]{3})";
+        var currencyMatch = Regex.Match(orderAmountFiat, currencyRegex);
+        if (currencyMatch.Success)
+        {
+            fiatCurrency = currencyMatch.Value;
+        }
+    }
+
+    var donation = false;
+
+    if (amount == null || amount == "0.00")
+    {
+        amount = null;
+        donation = true;
+    }
+
+    // Where the checkout page will open
+    string checkoutTarget = "&target=blank";
+
+    string url = "https://trocador.app/anonpay/?ticker_to=" + tickerTo + "&network_to=" + networkTo +
+    "&address=" + Model.BtcAddress + (amount != null ? "&amount=" + amount : "") +
+    (!string.IsNullOrWhiteSpace(Model.StoreName) ? "&name=" + Model.StoreName : "") +
+    (!string.IsNullOrWhiteSpace(Model.ItemDesc) ? "&description=" + Model.ItemDesc : "") +
+    (!string.IsNullOrWhiteSpace(Model.CustomerEmail) ? "&email=" + Model.CustomerEmail : "") + fromPreset + buttonBgColor +
+    (!string.IsNullOrWhiteSpace(fiatCurrency) ? "&fiat_equiv=" + fiatCurrency : "") + (donation ? "&donation=True" : "") +
+    (!string.IsNullOrWhiteSpace(referralCode) ? "&ref=" + referralCode : "") + checkoutTarget;
+}
+
+<iframe src="@url" style="min-height:300px;max-width:400px;width:100%;border:none" allowtransparency="true"></iframe>

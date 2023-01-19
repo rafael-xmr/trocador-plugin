@@ -1,7 +1,9 @@
+using System;
+using System.Reflection;
 using BTCPayServer.Abstractions.Contracts;
+using Microsoft.Extensions.DependencyInjection;
 using BTCPayServer.Abstractions.Models;
 using BTCPayServer.Abstractions.Services;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace BTCPayServer.Plugins.Trocador
 {
@@ -38,6 +40,9 @@ namespace BTCPayServer.Plugins.Trocador
             services.AddSingleton<IUIExtension>(new UIExtension("Trocador/CheckoutClassic/CheckoutContentExtension", "checkout-lightning-post-content"));
 
             services.AddSingleton<IUIExtension>(new UIExtension("Trocador/CheckoutEnd", "checkout-end"));
+
+            // -- Checkout No-Script --
+            services.AddSingleton<IUIExtension>(new UIExtension("Trocador/CheckoutNoScript/CheckoutPaymentExtension", "checkout-noscript-end"));
 
             base.Execute(services);
         }

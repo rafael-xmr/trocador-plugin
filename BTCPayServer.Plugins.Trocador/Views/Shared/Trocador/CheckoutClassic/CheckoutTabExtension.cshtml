@@ -4,6 +4,7 @@
 @inject TrocadorService TrocadorService
 @{
     const string defaultId = "Trocador";
+    const string defaultDisplayId = "Altcoins (Trocador)";
 
     var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
     var settings = await TrocadorService.GetTrocadorForStore(storeId);
@@ -14,7 +15,7 @@
     }
 
     string customId = settings.PaymentMethodId;
-    string displayId = (!string.IsNullOrEmpty(customId) ? customId : defaultId);
+    string displayId = (!string.IsNullOrEmpty(customId) ? customId : defaultDisplayId);
     int shouldSwitch = settings.ShowFirst is true ? 1 : 0;
 }
 

@@ -12,9 +12,10 @@
     }
 
     const string defaultId = "Trocador";
+    const string defaultDisplayId = "Altcoins (Trocador)";
 
     string customId = settings.PaymentMethodId;
-    string displayId = (!string.IsNullOrEmpty(customId) ? customId : defaultId);
+    string displayId = (!string.IsNullOrEmpty(customId) ? customId : defaultDisplayId);
     int shouldSwitch = settings.ShowFirst is true ? 1 : 0;
 }
 

@@ -90,7 +90,7 @@ function getUrl(that) {
 
   let donation;
 
-  if (!amount || amount.startsWith("0.00")) {
+  if (!amount || (amount.startsWith("0.00") && amount.endsWith("0"))) {
     amount = null;
     donation = true;
   }

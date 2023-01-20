@@ -42,7 +42,7 @@ function getUrl(that) {
   // -- Optional Params --
   let amount = toCurrencyDue && toCurrencyDue;
 
-  let fromPreset;
+  let fromPreset = "";
 
   if (preselectedCoin) {
     const [tickerFrom, networkFrom = "Mainnet"] = preselectedCoin.split("-");

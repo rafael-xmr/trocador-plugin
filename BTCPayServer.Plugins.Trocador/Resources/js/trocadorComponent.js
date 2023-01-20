@@ -40,7 +40,7 @@ function getUrl(that) {
   }
 
   // -- Optional Params --
-  let amount = toCurrencyDue && toCurrencyDue;
+  let amount = toCurrencyDue;
 
   let fromPreset = "&ticker_from=xmr&network_from=Mainnet";
 
@@ -65,19 +65,23 @@ function getUrl(that) {
     const commaDecimal = formattedAmount.lastIndexOf(",");
     const pointDecimal = formattedAmount.lastIndexOf(".");
     const decimalSeparatorIndex =
-        commaDecimal > pointDecimal
-            ? commaDecimal
-            : commaDecimal === pointDecimal
-            ? formattedAmount.length
-            : pointDecimal;
+      commaDecimal > pointDecimal
+        ? commaDecimal
+        : commaDecimal === pointDecimal
+        ? formattedAmount.length
+        : pointDecimal;
 
     const integerAmount = formattedAmount.substring(0, decimalSeparatorIndex);
     const decimals =
-        decimalSeparatorIndex < formattedAmount.length
-            ? '.' + formattedAmount.substring(decimalSeparatorIndex + 1, formattedAmount.length)
-            : "";
+      decimalSeparatorIndex < formattedAmount.length
+        ? "." +
+          formattedAmount.substring(
+            decimalSeparatorIndex + 1,
+            formattedAmount.length
+          )
+        : "";
 
-    amount = integerAmount.replace(/[,.]/g, '') + decimals;
+    amount = integerAmount.replace(/[,.]/g, "") + decimals;
 
     const currencyRegex = /([A-Z]{3})/;
     const currencyMatch = orderAmountFiat.match(currencyRegex);
@@ -86,14 +90,13 @@ function getUrl(that) {
 
   let donation;
 
-  if (!amount || amount === "0.00") {
+  if (!amount || amount.startsWith("0.00")) {
     amount = null;
     donation = true;
   }
 
   // Where the checkout page will open
   const checkoutTarget = "&target=blank";
-
 
   const url =
     "https://trocador.app/anonpay/?" +

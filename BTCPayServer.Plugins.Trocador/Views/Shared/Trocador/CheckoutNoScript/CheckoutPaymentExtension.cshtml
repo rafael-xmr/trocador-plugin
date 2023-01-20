@@ -7,7 +7,7 @@
     var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
     var settings = await TrocadorService.GetTrocadorForStore(storeId);
 
-    if (settings?.Enabled is not true)
+    if (settings?.Enabled is not true || Model.Status != "new")
     {
         return;
     }

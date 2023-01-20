@@ -42,7 +42,7 @@ function getUrl(that) {
   // -- Optional Params --
   let amount = toCurrencyDue && toCurrencyDue;
 
-  let fromPreset = "";
+  let fromPreset = "&ticker_from=XMR&network_from=Mainnet";
 
   if (preselectedCoin) {
     const [tickerFrom, networkFrom = "Mainnet"] = preselectedCoin.split("-");

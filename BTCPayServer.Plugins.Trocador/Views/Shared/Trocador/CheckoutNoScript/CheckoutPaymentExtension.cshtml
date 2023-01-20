@@ -14,7 +14,7 @@
 
     var markupPercentage = settings.AmountMarkupPercentage;
     var referralCode = settings.ReferralCode;
-    var fiatDenominated = settings.FiatDenominated;
+    var fiatDenominated = false;
 
     string toCurrency = settings.DefaultPaymentMethodId != "Auto" && settings.DefaultPaymentMethodId != null ?
     settings.DefaultPaymentMethodId :
@@ -77,7 +77,7 @@
     var fiatCurrency = "";
     string orderAmountFiat = Model.OrderAmountFiat;
 
-    if (fiatDenominated)
+    if (fiatDenominated is true)
     {
         string amountRegex = @"([\d,.]+)";
         var amountMatch = Regex.Match(Regex.Replace(orderAmountFiat, @"[  ]", ""), amountRegex);

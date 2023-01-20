@@ -14,7 +14,7 @@
 
 <script>
     const props = {};
-    props.fiatDenominated = @(settings?.FiatDenominated is true ? 1 : 0);
+    props.fiatDenominated = 0;
     props.defaultPaymentMethodId = "@settings.DefaultPaymentMethodId";
     props.preselectedCoin = "@settings.PreselectedCoin";
 
@@ -22,7 +22,7 @@
 </script>
 
 <template id="trocador-checkout-template" :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage"
-    :fiat-denominated="@(settings?.FiatDenominated is true ? 1 : 0)" :referral-code="@settings.ReferralCode"
+    :fiat-denominated="0" :referral-code="@settings.ReferralCode"
     :default-payment-method-id="'@settings.DefaultPaymentMethodId'" :preselected-coin="'@settings.PreselectedCoin'">
     <iframe :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
 </template>

@@ -1,5 +1,5 @@
 function getUrl(that) {
-  const { model, markupPercentage, referralCode, address } = that;
+  const { model, markupPercentage, referralCode, address, orderAmount } = that;
   const { fiatDenominated, defaultPaymentMethodId, preselectedCoin } =
     window.trocadorProps || that;
 
@@ -40,7 +40,7 @@ function getUrl(that) {
   }
 
   // -- Optional Params --
-  let amount = toCurrencyDue;
+  let amount = orderAmount || toCurrencyDue;
 
   let fromPreset = "&ticker_from=xmr&network_from=Mainnet";
 
@@ -131,6 +131,7 @@ Vue.component("TrocadorCheckout", {
   data() {
     return {
       address: undefined,
+      orderAmount: undefined,
       shown: false,
     };
   },
@@ -158,7 +159,7 @@ Vue.component("TrocadorCheckout", {
       }
     },
     updateData(data) {
-      const { invoiceBitcoinUrl } = data;
+      const { invoiceBitcoinUrl, orderAmount } = data;
 
       this.address = invoiceBitcoinUrl.substring(
         invoiceBitcoinUrl.indexOf(":") > -1
@@ -168,6 +169,7 @@ Vue.component("TrocadorCheckout", {
           ? invoiceBitcoinUrl.indexOf("?")
           : invoiceBitcoinUrl.length
       );
+      this.orderAmount = orderAmount;
     },
   },
 });

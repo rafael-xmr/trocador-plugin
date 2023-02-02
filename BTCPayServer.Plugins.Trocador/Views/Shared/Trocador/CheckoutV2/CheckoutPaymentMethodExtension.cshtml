@@ -3,25 +3,31 @@
 @using Newtonsoft.Json.Linq
 @inject TrocadorService TrocadorService
 @{
-    var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
-    var settings = await TrocadorService.GetTrocadorForStore(storeId);
+var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
+  var settings = await TrocadorService.GetTrocadorForStore(storeId);
 
-    if (settings?.Enabled is not true)
-    {
-        return;
-    }
+  if (settings?.Enabled is not true)
+  {
+  return;
+  }
 
-    const string defaultId = "Trocador";
-    const string defaultDisplayId = "Altcoins (Trocador)";
+  const string paymentMethodId = "Trocador";
+  string paymentMethodTitle = settings.PaymentMethodTitle;
+  string paymentMethodSubtitle = settings.PaymentMethodSubtitle;
+  int shouldSwitch = settings.ShowFirst is true ? 1 : 0;
+  }
 
-    string customId = settings.PaymentMethodId;
-    string displayId = (!string.IsNullOrEmpty(customId) ? customId : defaultDisplayId);
-    int shouldSwitch = settings.ShowFirst is true ? 1 : 0;
-}
-
-<a href="#@defaultId" class="btcpay-pill m-0 payment-method" :class="{ active: pmId === '@defaultId' }" v-on:click.prevent="changePaymentMethod('@defaultId')">
-    <trocador-tab inline-template :switch-tab="() => changePaymentMethod('@defaultId')" :current-tab="pmId"
-        :should-switch="@shouldSwitch">
-        <span>@displayId</span>
+  <a href="#@paymentMethodId" class="btcpay-pill m-0 payment-method" :class="{ active: pmId === '@paymentMethodId' }" v-on:click.prevent="changePaymentMethod('@paymentMethodId')">
+    <trocador-tab inline-template :switch-tab="() => changePaymentMethod('@paymentMethodId')" :current-tab="pmId"
+      :should-switch="@shouldSwitch">
+      <div style="text-align: center;">
+        <span style="display: block;">@paymentMethodTitle</span>
+        @if (!string.IsNullOrEmpty(paymentMethodSubtitle))
+        {
+        <span style="display: block; font-size: smaller; font-weight: lighter">
+          @paymentMethodSubtitle
+        </span>
+        }
+      </div>
     </trocador-tab>
-</a>
+  </a>

@@ -8,7 +8,8 @@ namespace BTCPayServer.Plugins.Trocador
         public bool FiatDenominated { get; set; }
         public string DefaultPaymentMethodId { get; set; } = "Auto";
         public string ReferralCode { get; set; }
-        public string PaymentMethodId { get; set; }
+        public string PaymentMethodTitle { get; set; } = "Altcoins";
+        public string PaymentMethodSubtitle { get; set; } = "Trocador";
         public Dictionary<string, string> PaymentMethods { get; set; }
         public string PreselectedCoin { get; set; } = "XMR";
         public bool ShowFirst { get; set; } = false;

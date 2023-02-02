@@ -84,7 +84,8 @@ namespace BTCPayServer.Plugins.Trocador
             vm.FiatDenominated = existing.FiatDenominated;
             vm.DefaultPaymentMethodId = existing.DefaultPaymentMethodId;
             vm.ReferralCode = existing.ReferralCode;
-            vm.PaymentMethodId = existing.PaymentMethodId;
+            vm.PaymentMethodTitle = existing.PaymentMethodTitle;
+            vm.PaymentMethodSubtitle = existing.PaymentMethodSubtitle;
             vm.PreselectedCoin = existing.PreselectedCoin;
             vm.ShowFirst = existing.ShowFirst;
         }
@@ -107,10 +108,19 @@ namespace BTCPayServer.Plugins.Trocador
                 FiatDenominated = vm.FiatDenominated,
                 DefaultPaymentMethodId = vm.DefaultPaymentMethodId,
                 ReferralCode = vm.ReferralCode,
-                PaymentMethodId = vm.PaymentMethodId,
+                PaymentMethodTitle = vm.PaymentMethodTitle,
+                PaymentMethodSubtitle = vm.PaymentMethodSubtitle,
                 PreselectedCoin = vm.PreselectedCoin,
                 ShowFirst = vm.ShowFirst,
             };
+
+            if (!string.IsNullOrEmpty(vm.PaymentMethodTitle))
+            {
+                TrocadorSettings.PaymentMethodTitle = vm.PaymentMethodTitle;
+            }
+            else {
+                TrocadorSettings.PaymentMethodTitle = "Altcoins";
+            }
 
             switch (command)
             {

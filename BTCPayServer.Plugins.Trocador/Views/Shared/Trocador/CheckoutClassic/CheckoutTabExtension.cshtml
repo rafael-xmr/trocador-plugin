@@ -3,48 +3,62 @@
 @using Newtonsoft.Json.Linq
 @inject TrocadorService TrocadorService
 @{
-    const string defaultId = "Trocador";
-    const string defaultDisplayId = "Altcoins (Trocador)";
+var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
+  var settings = await TrocadorService.GetTrocadorForStore(storeId);
 
-    var storeId = ((JObject)JObject.Parse(JsonConvert.SerializeObject(Model)))["StoreId"].Value<string>();
-    var settings = await TrocadorService.GetTrocadorForStore(storeId);
+  if (settings?.Enabled is not true)
+  {
+  return;
+  }
 
-    if (settings?.Enabled is not true)
-    {
-        return;
-    }
+  const string paymentMethodId = "Trocador";
+  string paymentMethodTitle = settings.PaymentMethodTitle;
+  string paymentMethodSubtitle = settings.PaymentMethodSubtitle;
+  int shouldSwitch = settings.ShowFirst is true ? 1 : 0;
+  }
 
-    string customId = settings.PaymentMethodId;
-    string displayId = (!string.IsNullOrEmpty(customId) ? customId : defaultDisplayId);
-    int shouldSwitch = settings.ShowFirst is true ? 1 : 0;
-}
-
-<template v-if="@shouldSwitch">
+  <template v-if="@shouldSwitch">
     <div
-        class="payment-tabs__tab"
-        id="@defaultId-tab"
-        v-on:click="switchTab('@defaultId')"
-        v-bind:class="{ 'active': currentTab == '@defaultId'}"
+      class="payment-tabs__tab"
+      id="@paymentMethodId-tab"
+      v-on:click="switchTab('@paymentMethodId')"
+      v-bind:class="{ 'active': currentTab == '@paymentMethodId'}"
     >
-        <trocador-tab
-            inline-template
-            :switch-tab="() => switchTab('@defaultId')"
-            :current-tab="currentTab"
-            :should-switch="@shouldSwitch"
-        >
-            <span>@displayId</span>
-        </trocador-tab>
+      <trocador-tab
+        inline-template
+        :switch-tab="() => switchTab('@paymentMethodId')"
+        :current-tab="currentTab"
+        :should-switch="@shouldSwitch"
+      >
+        <div style="text-align: center;">
+          <span style="display: block;">@paymentMethodTitle</span>
+          @if (!string.IsNullOrEmpty(paymentMethodSubtitle))
+          {
+          <span style="display: block; font-size: smaller; font-weight: lighter">
+            @paymentMethodSubtitle
+          </span>
+          }
+        </div>
+      </trocador-tab>
     </div>
-</template>
-<template v-else>
+  </template>
+  <template v-else>
     <div
-        class="payment-tabs__tab"
-        id="@defaultId-tab"
-        v-on:click="switchTab('@defaultId')"
-        v-bind:class="{ 'active': currentTab == '@defaultId'}"
+      class="payment-tabs__tab"
+      id="@paymentMethodId-tab"
+      v-on:click="switchTab('@paymentMethodId')"
+      v-bind:class="{ 'active': currentTab == '@paymentMethodId'}"
     >
-        <span>@displayId</span>
+      <div style="text-align: center;">
+        <span style="display: block;">@paymentMethodTitle</span>
+        @if (!string.IsNullOrEmpty(paymentMethodSubtitle))
+        {
+        <span style="display: block; font-size: smaller; font-weight: lighter">
+          @paymentMethodSubtitle
+        </span>
+        }
+      </div>
     </div>
-</template>
+  </template>
 
-<script src="~/Resources/js/trocadorTabComponent.js"></script>
+  <script src="~/Resources/js/trocadorTabComponent.js"></script>

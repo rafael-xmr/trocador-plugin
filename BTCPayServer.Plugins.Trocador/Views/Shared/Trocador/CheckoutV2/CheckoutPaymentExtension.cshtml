@@ -17,12 +17,13 @@
     props.fiatDenominated = 0;
     props.defaultPaymentMethodId = "@settings.DefaultPaymentMethodId";
     props.preselectedCoin = "@settings.PreselectedCoin";
+    props.referralCode = "@settings.ReferralCode";
 
     window.trocadorProps = props;
 </script>
 
 <template id="trocador-checkout-template" :model="srvModel" :markup-percentage="@settings.AmountMarkupPercentage"
-    :fiat-denominated="0" :referral-code="@settings.ReferralCode"
+    :fiat-denominated="0" :referral-code="'@settings.ReferralCode'"
     :default-payment-method-id="'@settings.DefaultPaymentMethodId'" :preselected-coin="'@settings.PreselectedCoin'">
     <iframe :src="url" style="min-height:300px;width:100%;border:none" allowtransparency="true"></iframe>
 </template>

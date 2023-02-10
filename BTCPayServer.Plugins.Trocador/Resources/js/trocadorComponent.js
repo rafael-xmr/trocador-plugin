@@ -1,7 +1,11 @@
 function getUrl(that) {
-  const { model, markupPercentage, referralCode, address, orderAmount } = that;
-  const { fiatDenominated, defaultPaymentMethodId, preselectedCoin } =
-    window.trocadorProps || that;
+  const { model, markupPercentage, address, orderAmount } = that;
+  const {
+    fiatDenominated,
+    defaultPaymentMethodId,
+    referralCode,
+    preselectedCoin,
+  } = window.trocadorProps || that;
 
   const {
     storeName,
@@ -120,6 +124,7 @@ function getUrl(that) {
 const PROPS = [
   "model",
   "markupPercentage",
+  "referralCode",
   "fiatDenominated",
   "defaultPaymentMethodId",
   "preselectedCoin",

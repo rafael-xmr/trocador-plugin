@@ -1,3 +1,8 @@
+function isZeroAmount(str) {
+  const regex = /^0+\.?0+$/;
+  return regex.test(str);
+}
+
 function getUrl(that) {
   const { model, markupPercentage, address, orderAmount } = that;
   const {
@@ -94,7 +99,7 @@ function getUrl(that) {
 
   let donation;
 
-  if (!amount || (amount.startsWith("0.00") && amount.endsWith("0"))) {
+  if (!amount || isZeroAmount(amount)) {
     amount = null;
     donation = true;
   }
